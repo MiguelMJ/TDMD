@@ -26,8 +26,8 @@ class Poset():
         self.cache_relaciones = {}
         self.cache_cotas_superiores = {}
         self.cache_sub_dirigidos = {}
-        self.cache_has_bottom = {}
-        self.cache_bottom = {}
+        self.cache_has_bottom = None
+        self.cache_bottom = None
     '''
     Función para comprobar que realmente es un Poset
     '''
@@ -124,21 +124,21 @@ class Poset():
             return self.cache_bottom
         return None
     '''
-    Función para comprobar si el Poset es un DCPO punteado
+    Función para comprobar si el Poset es un DCPO
     '''
-    def isDCPO(P,R):
-        return self.hasBottom()
-        '''
-        if (not hasBottom):
-            return False, None
-        partes = powerset(P)
-        dirigidos = [sub for sub in partes if subconjuntoDirigido(P,R,sub)]
+    def isDCPO(self):
+        partes = powerset(list(self.P))
+        dirigidos = [sub for sub in partes if self.subconjuntoDirigido(sub)]
         for d in dirigidos:
-            cota = cotaSuperior(P,R,d)
+            cota = self.cotaSuperior(d)
             if(not cota):
                 return False
         return True
     '''
+    Función para comprobar si el Poset es un DCPO
+    '''
+    def isPDCPO(self):
+	    return self.hasBottom() and self.isDCPO()
     
 '''
 Función para calcular el conjunto de partes de un conjunto S
@@ -191,7 +191,7 @@ R1 = [[1,1],
         [3,5],
         [4,4],
         [4,5],
-        [5,5]
+        [5,5],
     ]
 '''
 Funciones para los tests
@@ -238,9 +238,14 @@ def test03_subDirected():
     print_sub_directed_test(poset,{1,2,5},'3')
     print_sub_directed_test(poset,{1,3,4},'4')
     print_sub_directed_test(poset,{3,4,5},'5')
-    
+
+def test    
+
 if __name__ == '__main__':
-    test01_poset()
-    test02_allPosets({'a','b','c'})
-    test02_allPosets({'a','b','c','d'})
-    test03_subDirected()
+    # test01_poset()
+    # test02_allPosets({'a','b','c'})
+    # test02_allPosets({'a','b','c','d'})
+    # test03_subDirected()
+	p = Poset(P1, R1)
+	print(p.isDCPO())
+	print(p.isPDCPO())
