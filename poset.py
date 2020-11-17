@@ -4,6 +4,7 @@ descr: Este archivo es la entrega final del Tema 1 de la  asignatura de
 	   Teoría de Dominios y Modelos Denotacionales 2020
 '''
 import sys
+import json
 
 '''
 Esta clase contiene los datos relacionados con un Poset y las funciones
@@ -165,11 +166,19 @@ class Poset():
 	def copy(self):
 		return Poset(self.P,self.R);
 	'''
+	Función para borrar un elemento del poset
+	'''
+	def remove(self, element):
+		self.P.remove(element)
+		self.R = [pair for pair in self.R if element not in pair]
+		self.__clearCaches()
+	'''
 	Función para comprobar el tamaño de un Poset
 	'''
 	def __len__(self):
 		return len(self.P)
-	
+	def toJSON(self):
+		return json.dumps({'P':list(self.P), 'R':self.R}, indent=2)
 '''
 Función para calcular el conjunto de partes de un conjunto S
 '''

@@ -1,4 +1,5 @@
-from dcpo import Poset
+from poset import Poset
+from functools import reduce
 
 # DATOS DE LOS POSETS
 '''''''''''''''''''''''''''
@@ -53,20 +54,61 @@ Rc = [('1','1'),
 	  ('2','2')]
 
 '''
-Función para calcular todas las funciones monótonas crecientes 
-entre dos posets cualquiera
+Función recursiva auxiliar para all_fmc
 '''
-def all_fmc_rec(poset1, poset2):
+def all_fmc_rec(poset1, poset2, bounds):
 	# caso base
 	if(len(poset1) == 0):
 		return [set()]
 	# caso recursivo
+	# separamos en partes el poset origen
+	head = list(poset1.P)[0]
+	tail = poset1.copy()
+	tail.remove(head)
+	mayores1 = set(poset1.mayoresQue(head))
+	menores1 = set(poset1.menoresQue(head))
+	# los posibles pares dependen de los vinculos de head
+	pertinentBounds = [dest for (orig,dest) in bounds if head in orig]
+	destPosible = set(poset2.P)
+	for bound in pertinentBounds:
+		destPosible &= bound
 	
-
+	result = []
+	# hacemos una llamada recursiva por cada posible destino
+	# de head, cambiando el destino vinculado para el set de
+	# elementos mayores
+	for dest in destPosible:
+		pair = (head, dest)
+		mayores2 = set(poset2.mayoresQue(dest))
+		menores2 = set(poset2.menoresQue(dest))
+		newBounds = list(bounds)
+		newBounds += [(menores1, menores2), (mayores1, mayores2)]
+		subcall = all_fmc_rec(tail, poset2, newBounds)
+		for subrel in subcall:
+			subrel.add(pair)
+		result += subcall
+	return result
+'''
+Función para calcular todas las funciones monótonas crecientes
+entre dos posets cualesquiera
+'''
+def all_fmc(poset1, poset2):
+	return all_fmc_rec(poset1, poset2, [])
 # MAIN
 if (__name__ == '__main__'):
-	# Creamos los posets y los validamos
-	posets = [Poset(Pa, Ra),
-			  Poset(Pb, Rb),
-			  Poset(Pc, Rc)]
+	# asignamos el apartado a cada poset
+	posets = {'a':Poset(Pa, Ra),
+			  'b':Poset(Pb, Rb),
+			  'c':Poset(Pc, Rc)}
+	
+	for apartado in posets:
+		poset = posets[apartado]
+		print('=== APARTADO ({}) ==='.format(apartado))
+		# print('POSET:')
+		# print(poset.toJSON())
+		# print('FUNCIONES MONOTONAS CRECIENTES')
+		funciones = all_fmc(poset, poset)
+		# EL SIGUIENTE CÓDIGO ES SOLO PARA IMPRIMIRLO BONITO Y EN ORDEN
+		print("\n".join([str(sorted(f, key=lambda x: x[0])) for f in funciones]))
+		print("Nº de funciones: {}".format(len(funciones)))
 	
