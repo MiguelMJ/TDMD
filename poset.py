@@ -109,6 +109,19 @@ class Poset():
         self.cache_cotas_superiores[representacion] = cota
         return cota
     '''
+    Función para obtener el supremo de un subconjunto M en el Poset
+    '''
+    def min(self,M):
+        if len(M) == 0:
+            return None    
+        cota = list(self.cotaSuperior(M))
+        minimum = cota[0]
+        for el in cota:
+                if minimum in self.mayoresQue(el):
+                    minimum = el
+        return minimum
+		
+    '''
     Función para comprobar que un subconjunto M es dirigido
     '''
     def subconjuntoDirigido(self, M):

@@ -98,21 +98,24 @@ def all_fmc(poset1, poset2):
 
 '''
 Función para calcular todas las funciones continuas entre dos
-poosets cualesquiera
+posets cualesquiera
 '''
 def all_continuas(poset1, poset2):
     crecientes = all_fmc(poset1, poset2)
-    dirigidos = poset1.allDirigidos()
+    dirigidos = poset1.allDirigidos()  
     continuas = []
     for f in crecientes:
         ok = True
         for M in dirigidos:
-            supM = min(poset1.cotaSuperior(M))
-            imgM = {b for (a,b) in f if b in M}
-            supImgM = min(poset2.cotaSuperior(M))
-            if supM != supImgM:
-                ok = False
-                break
+            if M:
+                supM = poset1.min(poset1.cotaSuperior(M))
+                imgM = {b for (a,b) in f if a in M}
+                supImgM = poset2.min(poset2.cotaSuperior(imgM))
+                imgSupM = [b for (a,b) in f if a == supM][0]
+                if imgSupM != supImgM:
+                    print("(X) M: {} supM: {} imgM: {} supImgM: {} imgSupM: {} cota: {}".format(M,supM,imgM,supImgM,imgSupM, poset2.cotaSuperior(imgM)))
+                    ok = False
+                    break
         if ok:
             continuas.append(f)
     return continuas
