@@ -102,15 +102,15 @@ posets cualesquiera
 '''
 def all_continuas(poset1, poset2):
     crecientes = all_fmc(poset1, poset2)
-    dirigidos = poset1.allDirigidos()  
+    dirigidos = poset1.allDirigidos()
     continuas = []
     for f in crecientes:
         ok = True
         for M in dirigidos:
             if M:
-                supM = poset1.min(poset1.cotaSuperior(M))
+                supM = poset1.supremo(M)
                 imgM = {b for (a,b) in f if a in M}
-                supImgM = poset2.min(poset2.cotaSuperior(imgM))
+                supImgM = poset2.supremo(imgM)
                 imgSupM = [b for (a,b) in f if a == supM][0]
                 if imgSupM != supImgM:
                     print("(X) M: {} supM: {} imgM: {} supImgM: {} imgSupM: {} cota: {}".format(M,supM,imgM,supImgM,imgSupM, poset2.cotaSuperior(imgM)))
